@@ -43,34 +43,200 @@
   <div id="dartdoc-main-content" class="main-content">
       
 <section class="desc markdown">
-  <!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
-
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/tools/pub/writing-package-pages).
-
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/to/develop-packages).
--->
-<p>TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.</p>
+  <h1 id="shelf_essentials">shelf_essentials</h1>
+<p><img src="https://img.shields.io/github/license/k-arindam/shelf_essentials" alt="license">
+<img src="https://img.shields.io/badge/Dart-3%2B-blue" alt="dart"></p>
+<p><strong>Essential utilities for building HTTP servers with <code>shelf</code>.</strong></p>
+<p><code>shelf_essentials</code> provides commonly needed extensions and helpers for:</p>
+<ul>
+<li>Reading request bodies</li>
+<li>Parsing JSON requests</li>
+<li>Handling multipart form data</li>
+<li>Working with HTTP methods safely</li>
+</ul>
+<p>Designed to be <strong>lightweight</strong>, <strong>idiomatic</strong>, and <strong>shelf-native</strong>.</p>
+<hr>
 <h2 id="features">Features</h2>
-<p>TODO: List what your package can do. Maybe include images, gifs, or videos.</p>
-<h2 id="getting-started">Getting started</h2>
-<p>TODO: List prerequisites and provide or point to information on how to
-start using the package.</p>
-<h2 id="usage">Usage</h2>
-<p>TODO: Include short and useful examples for package users. Add longer examples
-to <code>/example</code> folder.</p>
-<pre class="language-dart"><code class="language-dart">const like = 'sample';
+<ul>
+<li>🔌 <code>Request</code> extensions for body, JSON, and form data</li>
+<li>📦 Multipart form parsing with fields &amp; files</li>
+<li>🧭 Type-safe HTTP method enum</li>
+<li>🧱 Zero framework lock-in</li>
+<li>⚡ Minimal dependencies</li>
+</ul>
+<hr>
+<h2 id="installation">Installation</h2>
+<p>Add this to your <code>pubspec.yaml</code>:</p>
+<pre class="language-yaml"><code class="language-yaml">dependencies:
+  shelf_essentials: ^1.0.0
 </code></pre>
-<h2 id="additional-information">Additional information</h2>
-<p>TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.</p>
+<p>Then run:</p>
+<pre class="language-bash"><code class="language-bash">dart pub get
+</code></pre>
+<hr>
+<h2 id="usage">Usage</h2>
+<h3 id="import">Import</h3>
+<pre class="language-dart"><code class="language-dart">import 'package:shelf_essentials/shelf_essentials.dart';
+</code></pre>
+<hr>
+<h2 id="request-extensions">Request Extensions</h2>
+<h3 id="read-request-body">Read Request Body</h3>
+<pre class="language-dart"><code class="language-dart">final body = await request.body();
+</code></pre>
+<hr>
+<h3 id="parse-json-body">Parse JSON Body</h3>
+<pre class="language-dart"><code class="language-dart">final data = await request.json();
+
+print(data['email']);
+</code></pre>
+<blockquote>
+<p>The returned value can be a <code>Map</code>, <code>List</code>, <code>String</code>, <code>num</code>, or <code>bool</code>.</p>
+</blockquote>
+<hr>
+<h3 id="access-http-method-safely">Access HTTP Method Safely</h3>
+<pre class="language-dart"><code class="language-dart">switch (request.httpMethod) {
+  case HttpMethod.get:
+    return Response.ok('GET request');
+  case HttpMethod.post:
+    return Response.ok('POST request');
+  default:
+    return Response.notFound('Unsupported method');
+}
+</code></pre>
+<hr>
+<h2 id="form-data-handling">Form Data Handling</h2>
+<h3 id="parse-multipart-form-data">Parse Multipart Form Data</h3>
+<pre class="language-dart"><code class="language-dart">final form = await request.formData();
+</code></pre>
+<hr>
+<h3 id="access-fields">Access Fields</h3>
+<pre class="language-dart"><code class="language-dart">final username = form.fields['username'];
+final email = form.fields['email'];
+</code></pre>
+<hr>
+<h3 id="access-uploaded-files">Access Uploaded Files</h3>
+<pre class="language-dart"><code class="language-dart">final avatar = form.files['avatar'];
+
+if (avatar != null) {
+  final bytes = await avatar.readAsBytes();
+  print('Uploaded file: ${avatar.name}');
+}
+</code></pre>
+<hr>
+<h2 id="uploadedfile">UploadedFile</h2>
+<p>Each uploaded file provides:</p>
+<pre class="language-dart"><code class="language-dart">final name = file.name;
+final contentType = file.contentType;
+final bytes = await file.readAsBytes();
+</code></pre>
+<p>⚠️ <strong>Note:</strong><br>
+File streams are <strong>single-use</strong>. Call either <code>readAsBytes()</code> <strong>or</strong> <code>openRead()</code> once.</p>
+<hr>
+<h2 id="api-overview">API Overview</h2>
+<h3 id="requestextension">RequestExtension</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>body()</code></td>
+<td>Reads request body as <code>String</code></td>
+</tr>
+<tr>
+<td><code>json()</code></td>
+<td>Parses body as JSON</td>
+</tr>
+<tr>
+<td><code>formData()</code></td>
+<td>Parses multipart form data</td>
+</tr>
+<tr>
+<td><code>httpMethod</code></td>
+<td>Type-safe HTTP method</td>
+</tr>
+<tr>
+<td><code>connectionInfo</code></td>
+<td>Socket connection info</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="httpmethod">HttpMethod</h3>
+<pre class="language-dart"><code class="language-dart">enum HttpMethod {
+  get,
+  post,
+  put,
+  patch,
+  delete,
+  options,
+  head,
+}
+</code></pre>
+<hr>
+<h3 id="formdata">FormData</h3>
+<pre class="language-dart"><code class="language-dart">form.fields   // Map&lt;String, String&gt;
+form.files    // Map&lt;String, UploadedFile&gt;
+</code></pre>
+<p><code>FormData</code> is <strong>immutable</strong> by design.</p>
+<hr>
+<h2 id="example-shelf-server">Example Shelf Server</h2>
+<pre class="language-dart"><code class="language-dart">import 'package:shelf/shelf.dart';
+import 'package:shelf/shelf_io.dart';
+import 'package:shelf_essentials/shelf_essentials.dart';
+
+void main() async {
+  final handler = (Request request) async {
+    if (request.httpMethod == HttpMethod.post) {
+      final data = await request.json();
+      return Response.ok('Hello ${data['name']}');
+    }
+    return Response.ok('Send a POST request');
+  };
+
+  await serve(handler, 'localhost', 8080);
+  print('Server running on http://localhost:8080');
+}
+</code></pre>
+<hr>
+<h2 id="design-goals">Design Goals</h2>
+<ul>
+<li>✅ Minimal surface area</li>
+<li>✅ Idiomatic Dart</li>
+<li>✅ Shelf-first</li>
+<li>✅ No hidden magic</li>
+<li>✅ Easy to extend</li>
+</ul>
+<hr>
+<h2 id="roadmap">Roadmap</h2>
+<ul>
+<li>Content-Type validation helpers</li>
+<li>Typed JSON parsing utilities</li>
+<li>Streaming file size helpers</li>
+<li>Improved error handling</li>
+<li>Middleware utilities</li>
+</ul>
+<hr>
+<h2 id="contributing">Contributing</h2>
+<p>Contributions are welcome!</p>
+<ul>
+<li>Open an issue for bugs or feature requests</li>
+<li>Submit a PR with clear description and tests</li>
+<li>Keep APIs simple and shelf-compatible</li>
+</ul>
+<hr>
+<h2 id="license">License</h2>
+<p>MIT License © 2025<br>
+Use it freely in open-source and commercial projects.</p>
+<hr>
+<h2 id="acknowledgements">Acknowledgements</h2>
+<ul>
+<li>Inspired by the simplicity of the <a href="https://pub.dev/packages/shelf"><code>shelf</code></a> package</li>
+<li>Special thanks to <a href="https://dart-frog.dev"><code>dart-frog</code></a></li>
+</ul>
 </section>
 
 

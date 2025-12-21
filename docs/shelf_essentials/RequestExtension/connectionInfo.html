@@ -59,7 +59,7 @@
   <section id="getter">
     <section class="multi-line-signature">
       
-      <span class="returntype"><a href="https://api.flutter.dev/flutter/dart-io/HttpConnectionInfo-class.html">HttpConnectionInfo</a></span>
+      <span class="returntype"><a href="https://api.flutter.dev/flutter/dart-io/HttpConnectionInfo-class.html">HttpConnectionInfo</a>?</span>
       get
       <span class="name ">connectionInfo</span>
       
@@ -73,8 +73,8 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">HttpConnectionInfo get connectionInfo {
-  return context[&#39;shelf.io.connection_info&#39;]! as HttpConnectionInfo;
+  <pre class="language-dart"><code class="language-dart">HttpConnectionInfo? get connectionInfo {
+  return context[&#39;shelf.io.connection_info&#39;] as HttpConnectionInfo?;
 }</code></pre>
 </section>
 
