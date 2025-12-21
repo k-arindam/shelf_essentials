@@ -7,7 +7,7 @@ import 'package:shelf_essentials/src/http_method.dart';
 
 extension RequestExtension on Request {
   /// Returns a [Stream] representing the body.
-  Future<String> body() async => await readAsString();
+  Future<String> body() => readAsString();
 
   /// Returns a [Future] containing the form data as a [Map].
   Future<FormData> formData() {
@@ -17,7 +17,15 @@ extension RequestExtension on Request {
   /// Returns a [Future] containing the body text parsed as a json object.
   /// This object could be anything that can be represented by json
   /// e.g. a map, a list, a string, a number, a bool...
-  Future<dynamic> json() async => jsonDecode(await body());
+  Future<dynamic> json() async {
+    final contentType = headers['content-type'];
+
+    if (contentType == null || !contentType.contains('application/json')) {
+      throw FormatException('Request content-type is not application/json');
+    }
+
+    return jsonDecode(await body());
+  }
 
   /// The [HttpMethod] associated with the request.
   HttpMethod get httpMethod {
@@ -28,8 +36,8 @@ extension RequestExtension on Request {
   }
 
   /// Connection information for the associated HTTP request.
-  HttpConnectionInfo get connectionInfo {
-    return context['shelf.io.connection_info']! as HttpConnectionInfo;
+  HttpConnectionInfo? get connectionInfo {
+    return context['shelf.io.connection_info'] as HttpConnectionInfo?;
   }
 }
 
