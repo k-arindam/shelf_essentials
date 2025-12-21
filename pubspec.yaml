@@ -1,7 +1,7 @@
 name: shelf_essentials
 description: "Dart Shelf Essentials"
 version: 0.0.1
-homepage:
+homepage: https://karindam.in/shelf_essentials
 
 environment:
   sdk: ^3.10.1
