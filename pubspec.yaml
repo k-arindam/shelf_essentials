@@ -1,7 +1,18 @@
 name: shelf_essentials
 description: "Dart Shelf Essentials"
 version: 0.0.1
-homepage: https://karindam.in/shelf_essentials
+repository: https://github.com/k-arindam/shelf_essentials
+documentation: https://karindam.in/shelf_essentials
+
+funding:
+  - https://github.com/sponsors/k-arindam
+
+topics:
+  - dart
+  - flutter
+  - shelf
+  - backend
+  - web-server
 
 environment:
   sdk: ^3.10.1
@@ -20,7 +31,7 @@ dev_dependencies:
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter packages.
-flutter:
+# flutter:
 
   # To add assets to your package, add an assets section, like this:
   # assets:
