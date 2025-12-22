@@ -80,9 +80,7 @@ Otherwise the key/value pair is added to the map.</p>
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">@override
-@Deprecated(
-  &#39;FormData should be immutable, in the future this will thrown an error&#39;,
-)
+@Deprecated(&#39;FormData should be immutable, in the future this will thrown an error&#39;)
 void operator []=(String key, String value) =&gt; _fields[key] = value;</code></pre>
 </section>
 
@@ -111,7 +109,7 @@ void operator []=(String key, String value) =&gt; _fields[key] = value;</code></
 <footer>
   <span class="no-break">
     shelf_essentials
-      1.0.0
+      1.0.1
   </span>
   
 </footer>

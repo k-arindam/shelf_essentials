@@ -62,9 +62,20 @@
     </section>
     
 <section class="desc markdown">
-  <p>Returns a <a href="https://api.flutter.dev/flutter/dart-core/Future-class.html">Future</a> containing the body text parsed as a json object.
-This object could be anything that can be represented by json
-e.g. a map, a list, a string, a number, a bool...</p>
+  <p>Parses the request body as JSON and returns the decoded value.</p>
+<p>The returned value can be any JSON-decodable type:</p>
+<ul>
+<li><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a> for JSON objects</li>
+<li><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a> for JSON arrays</li>
+<li><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>, <a href="https://api.flutter.dev/flutter/dart-core/num-class.html">num</a>, <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a>, or <code>null</code> for JSON primitives</li>
+</ul>
+<p>Throws <a href="https://api.flutter.dev/flutter/dart-core/FormatException-class.html">FormatException</a> if the content-type is not <code>application/json</code>.
+Throws <a href="https://api.flutter.dev/flutter/dart-core/FormatException-class.html">FormatException</a> if the body is not valid JSON.</p>
+<p>Returns: A <a href="https://api.flutter.dev/flutter/dart-core/Future-class.html">Future</a> containing the decoded JSON value</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">final data = await request.json();
+print(data['email']); // Access JSON object properties
+</code></pre>
 </section>
 
 
@@ -107,7 +118,7 @@ e.g. a map, a list, a string, a number, a bool...</p>
 <footer>
   <span class="no-break">
     shelf_essentials
-      1.0.0
+      1.0.1
   </span>
   
 </footer>

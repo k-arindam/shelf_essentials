@@ -59,6 +59,47 @@
     </div>
 
     
+<section class="desc markdown">
+  <p>Essential utilities for building HTTP servers with <a href="https://pub.dev/packages/shelf">shelf</a>.</p>
+<p>This package provides commonly needed extensions and helpers for:</p>
+<ul>
+<li>Reading request bodies</li>
+<li>Parsing JSON requests</li>
+<li>Handling multipart form data</li>
+<li>Working with HTTP methods safely</li>
+<li>Adding CORS headers to responses</li>
+</ul>
+<h2 id="features">Features</h2>
+<ul>
+<li>🔌 <a href="../shelf_essentials/RequestExtension.html">RequestExtension</a> for body, JSON, and form data</li>
+<li>📦 Multipart form parsing with fields &amp; files</li>
+<li>🧭 Type-safe <a href="../shelf_essentials/HttpMethod.html">HttpMethod</a> enum</li>
+<li>🔐 CORS headers middleware</li>
+<li>🔧 Zero framework lock-in</li>
+<li>⚡ Minimal dependencies</li>
+</ul>
+<h2 id="quick-start">Quick Start</h2>
+<pre class="language-dart"><code class="language-dart">import 'package:shelf/shelf.dart';
+import 'package:shelf/shelf_io.dart';
+import 'package:shelf_essentials/shelf_essentials.dart';
+
+void main() async {
+  final handler = (Request request) async {
+    switch (request.httpMethod) {
+      case HttpMethod.get:
+        return Response.ok('Hello World');
+      case HttpMethod.post:
+        final data = await request.json();
+        return Response.ok('Received: ${data}');
+      default:
+        return Response.notFound('Not Found');
+    }
+  };
+
+  await serve(handler, 'localhost', 8080);
+}
+</code></pre>
+</section>
 
 
     <section class="summary offset-anchor" id="classes">
@@ -77,7 +118,7 @@
 
 </dt>
 <dd>
-  The uploaded file of a form data request.
+  Represents an uploaded file from a form data request.
 </dd>
 
       </dl>
@@ -109,7 +150,7 @@
 
 </dt>
 <dd>
-  
+  Extension methods on <a href="https://pub.dev/documentation/shelf/1.4.2/shelf/Request-class.html">Request</a> to simplify common HTTP operations.
 </dd>
 
       </dl>
@@ -117,7 +158,57 @@
 
 
 
+    <section class="summary offset-anchor" id="functions">
+      <h2>Functions</h2>
+      <dl class="callables">
+          <dt id="corsHeaders" class="callable">
+  <span class="name"><a href="../shelf_essentials/corsHeaders.html">corsHeaders</a></span><span class="signature">(<wbr>{<span class="parameter" id="corsHeaders-param-addedHeaders"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span>?</span> <span class="parameter-name">addedHeaders</span>, </span><span class="parameter" id="corsHeaders-param-originChecker"><span class="type-annotation"><a href="../shelf_essentials/OriginChecker.html">OriginChecker</a></span> <span class="parameter-name">originChecker</span> = <span class="default-value">originAllowAll</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://pub.dev/documentation/shelf/1.4.2/shelf/Middleware.html">Middleware</a></span>
+  </span>
+  
 
+</dt>
+<dd>
+  A Shelf middleware that adds CORS (Cross-Origin Resource Sharing) headers to responses.
+  
+
+</dd>
+
+          <dt id="originOneOf" class="callable">
+  <span class="name"><a href="../shelf_essentials/originOneOf.html">originOneOf</a></span><span class="signature">(<wbr><span class="parameter" id="originOneOf-param-origins"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span> <span class="parameter-name">origins</span></span>)
+    <span class="returntype parameter">&#8594; <a href="../shelf_essentials/OriginChecker.html">OriginChecker</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Creates an <a href="../shelf_essentials/OriginChecker.html">OriginChecker</a> that allows only specific origins.
+  
+
+</dd>
+
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor" id="typedefs">
+      <h2>Typedefs</h2>
+      <dl>
+          
+  <dt id="OriginChecker" class="callable">
+    <span class="name"><a href="../shelf_essentials/OriginChecker.html">OriginChecker</a></span><span class="signature">
+      <span class="returntype parameter">= <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a> Function<span class="signature">(<span class="parameter" id="param-origin"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">origin</span></span>)</span></span>
+    </span>
+    
+
+  </dt>
+  <dd>
+    A function type that validates whether a given origin is allowed.
+    
+
+  </dd>
+
+      </dl>
+    </section>
 
   </div> <!-- /.main-content -->
   <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
@@ -146,7 +237,7 @@
 <footer>
   <span class="no-break">
     shelf_essentials
-      1.0.0
+      1.0.1
   </span>
   
 </footer>

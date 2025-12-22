@@ -53,6 +53,24 @@
 </h1></div>
 
     
+<section class="desc markdown">
+  <p>Extension methods on <a href="https://pub.dev/documentation/shelf/1.4.2/shelf/Request-class.html">Request</a> to simplify common HTTP operations.</p>
+<p>Provides convenient methods for reading and parsing request bodies,
+accessing the HTTP method, and retrieving connection information.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">final handler = (Request request) async {
+  switch (request.httpMethod) {
+    case HttpMethod.post:
+      final data = await request.json();
+      return Response.ok('Received: ${data}');
+    case HttpMethod.get:
+      return Response.ok('Hello');
+    default:
+      return Response.notFound('Not found');
+  }
+};
+</code></pre>
+</section>
 
     <section>
       <dl class="dl-horizontal">
@@ -84,7 +102,7 @@
         <span>Available on <a href="https://pub.dev/documentation/shelf/1.4.2/shelf/Request-class.html">Request</a>,
         provided by the <a href="../shelf_essentials/RequestExtension.html">RequestExtension</a> extension</span>
       </p>
-  Connection information for the associated HTTP request.
+  Returns connection information for the associated HTTP request.
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
@@ -100,7 +118,7 @@
         <span>Available on <a href="https://pub.dev/documentation/shelf/1.4.2/shelf/Request-class.html">Request</a>,
         provided by the <a href="../shelf_essentials/RequestExtension.html">RequestExtension</a> extension</span>
       </p>
-  The <a href="../shelf_essentials/HttpMethod.html">HttpMethod</a> associated with the request.
+  Returns the HTTP method of the request as a type-safe <a href="../shelf_essentials/HttpMethod.html">HttpMethod</a> enum.
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
@@ -126,7 +144,7 @@
         <span>Available on <a href="https://pub.dev/documentation/shelf/1.4.2/shelf/Request-class.html">Request</a>,
         provided by the <a href="../shelf_essentials/RequestExtension.html">RequestExtension</a> extension</span>
       </p>
-  Returns a <a href="https://api.flutter.dev/flutter/dart-core/Stream-class.html">Stream</a> representing the body.
+  Reads and returns the request body as a <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>.
   
 
 </dd>
@@ -143,7 +161,7 @@
         <span>Available on <a href="https://pub.dev/documentation/shelf/1.4.2/shelf/Request-class.html">Request</a>,
         provided by the <a href="../shelf_essentials/RequestExtension.html">RequestExtension</a> extension</span>
       </p>
-  Returns a <a href="https://api.flutter.dev/flutter/dart-core/Future-class.html">Future</a> containing the form data as a <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a>.
+  Parses the request body as form data and returns a <a href="../shelf_essentials/FormData-class.html">FormData</a> object.
   
 
 </dd>
@@ -160,9 +178,7 @@
         <span>Available on <a href="https://pub.dev/documentation/shelf/1.4.2/shelf/Request-class.html">Request</a>,
         provided by the <a href="../shelf_essentials/RequestExtension.html">RequestExtension</a> extension</span>
       </p>
-  Returns a <a href="https://api.flutter.dev/flutter/dart-core/Future-class.html">Future</a> containing the body text parsed as a json object.
-This object could be anything that can be represented by json
-e.g. a map, a list, a string, a number, a bool...
+  Parses the request body as JSON and returns the decoded value.
   
 
 </dd>
@@ -197,7 +213,7 @@ e.g. a map, a list, a string, a number, a bool...
 <footer>
   <span class="no-break">
     shelf_essentials
-      1.0.0
+      1.0.1
   </span>
   
 </footer>

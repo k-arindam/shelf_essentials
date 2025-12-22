@@ -123,6 +123,45 @@ if (avatar != null) {
 }
 </code></pre>
 <hr>
+<h2 id="cors-headers">CORS Headers</h2>
+<h3 id="enable-cors-for-all-origins">Enable CORS for All Origins</h3>
+<p>Add CORS headers to all responses with default settings:</p>
+<pre class="language-dart"><code class="language-dart">final handler = Pipeline()
+  .addMiddleware(corsHeaders())
+  .addHandler((request) =&gt; Response.ok('Hello'));
+</code></pre>
+<hr>
+<h3 id="restrict-cors-to-specific-origins">Restrict CORS to Specific Origins</h3>
+<p>Allow CORS only from specific origins:</p>
+<pre class="language-dart"><code class="language-dart">final handler = Pipeline()
+  .addMiddleware(corsHeaders(
+    originChecker: originOneOf(['https://example.com', 'https://app.example.com']),
+  ))
+  .addHandler((request) =&gt; Response.ok('Hello'));
+</code></pre>
+<hr>
+<h3 id="add-custom-headers">Add Custom Headers</h3>
+<p>Include additional custom headers in CORS responses:</p>
+<pre class="language-dart"><code class="language-dart">final handler = Pipeline()
+  .addMiddleware(corsHeaders(
+    addedHeaders: {
+      'X-Custom-Header': 'custom-value',
+      'Access-Control-Allow-Credentials': 'true',
+    },
+    originChecker: originOneOf(['https://example.com']),
+  ))
+  .addHandler((request) =&gt; Response.ok('Hello'));
+</code></pre>
+<hr>
+<h3 id="cors-defaults">CORS Defaults</h3>
+<p>When using <code>corsHeaders</code> middleware, the following defaults are applied:</p>
+<ul>
+<li><strong>Allowed Methods</strong>: DELETE, GET, OPTIONS, PATCH, POST, PUT</li>
+<li><strong>Allowed Headers</strong>: accept, accept-encoding, authorization, content-type, dnt, origin, user-agent</li>
+<li><strong>Credentials</strong>: true</li>
+<li><strong>Max-Age</strong>: 86400 seconds (24 hours)</li>
+</ul>
+<hr>
 <h2 id="uploadedfile">UploadedFile</h2>
 <p>Each uploaded file provides:</p>
 <pre class="language-dart"><code class="language-dart">final name = file.name;
@@ -132,56 +171,99 @@ final bytes = await file.readAsBytes();
 <p>⚠️ <strong>Note:</strong><br>
 File streams are <strong>single-use</strong>. Call either <code>readAsBytes()</code> <strong>or</strong> <code>openRead()</code> once.</p>
 <hr>
-<h2 id="api-overview">API Overview</h2>
-<h3 id="requestextension">RequestExtension</h3>
+<h3 id="api-overview">API Overview</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Request Extensions</strong></td>
+<td>Methods to read body, parse JSON, handle forms, access HTTP method</td>
+</tr>
+<tr>
+<td><strong>CORS Middleware</strong></td>
+<td>Add CORS headers with origin validation</td>
+</tr>
+<tr>
+<td><strong>Form Data Parsing</strong></td>
+<td>Support for URL-encoded and multipart form data</td>
+</tr>
+<tr>
+<td><strong>Uploaded Files</strong></td>
+<td>Access file name, content-type, and read contents</td>
+</tr>
+<tr>
+<td><strong>HTTP Methods</strong></td>
+<td>Type-safe enum for common HTTP methods</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h4 id="requestextension-methods">RequestExtension Methods</h4>
 <table>
 <thead>
 <tr>
 <th>Method</th>
+<th>Returns</th>
 <th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>body()</code></td>
-<td>Reads request body as <code>String</code></td>
+<td><code>Future&lt;String&gt;</code></td>
+<td>Reads request body as String</td>
 </tr>
 <tr>
 <td><code>json()</code></td>
-<td>Parses body as JSON</td>
+<td><code>Future&lt;dynamic&gt;</code></td>
+<td>Parses body as JSON (Map, List, String, num, bool)</td>
 </tr>
 <tr>
 <td><code>formData()</code></td>
-<td>Parses multipart form data</td>
+<td><code>Future&lt;FormData&gt;</code></td>
+<td>Parses multipart or URL-encoded form data</td>
 </tr>
 <tr>
 <td><code>httpMethod</code></td>
-<td>Type-safe HTTP method</td>
+<td><code>HttpMethod</code></td>
+<td>Type-safe HTTP method enum</td>
 </tr>
 <tr>
 <td><code>connectionInfo</code></td>
-<td>Socket connection info</td>
+<td><code>HttpConnectionInfo?</code></td>
+<td>Socket connection information</td>
 </tr>
 </tbody>
 </table>
 <hr>
-<h3 id="httpmethod">HttpMethod</h3>
-<pre class="language-dart"><code class="language-dart">enum HttpMethod {
-  get,
-  post,
-  put,
-  patch,
-  delete,
-  options,
-  head,
-}
-</code></pre>
-<hr>
-<h3 id="formdata">FormData</h3>
-<pre class="language-dart"><code class="language-dart">form.fields   // Map&lt;String, String&gt;
-form.files    // Map&lt;String, UploadedFile&gt;
-</code></pre>
-<p><code>FormData</code> is <strong>immutable</strong> by design.</p>
+<h4 id="cors-functions">CORS Functions</h4>
+<table>
+<thead>
+<tr>
+<th>Function</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>corsHeaders()</code></td>
+<td>Middleware to add CORS headers to responses</td>
+</tr>
+<tr>
+<td><code>originAllowAll()</code></td>
+<td>Origin checker that allows all origins</td>
+</tr>
+<tr>
+<td><code>originOneOf()</code></td>
+<td>Origin checker that allows specific origins</td>
+</tr>
+</tbody>
+</table>
 <hr>
 <h2 id="example-shelf-server">Example Shelf Server</h2>
 <pre class="language-dart"><code class="language-dart">import 'package:shelf/shelf.dart';
@@ -247,7 +329,7 @@ Use it freely in open-source and commercial projects.</p>
   <span class="name"><a href="shelf_essentials/">shelf_essentials</a></span> 
 
 </dt>
-<dd>
+<dd>Essential utilities for building HTTP servers with <a href="https://pub.dev/packages/shelf">shelf</a>.
 </dd>
 
         </dl>
@@ -277,7 +359,7 @@ Use it freely in open-source and commercial projects.</p>
 <footer>
   <span class="no-break">
     shelf_essentials
-      1.0.0
+      1.0.1
   </span>
   
 </footer>

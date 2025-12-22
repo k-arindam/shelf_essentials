@@ -62,7 +62,19 @@
     </section>
     
 <section class="desc markdown">
-  <p>Returns a <a href="https://api.flutter.dev/flutter/dart-core/Future-class.html">Future</a> containing the form data as a <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a>.</p>
+  <p>Parses the request body as form data and returns a <a href="../../shelf_essentials/FormData-class.html">FormData</a> object.</p>
+<p>Supports both:</p>
+<ul>
+<li><code>application/x-www-form-urlencoded</code></li>
+<li><code>multipart/form-data</code></li>
+</ul>
+<p>Throws <a href="https://api.flutter.dev/flutter/dart-core/StateError-class.html">StateError</a> if the content-type is not one of the supported types.</p>
+<p>Returns: A <a href="https://api.flutter.dev/flutter/dart-core/Future-class.html">Future</a> containing parsed form fields and uploaded files</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">final form = await request.formData();
+final username = form.fields['username'];
+final avatar = form.files['avatar'];
+</code></pre>
 </section>
 
 
@@ -99,7 +111,7 @@
 <footer>
   <span class="no-break">
     shelf_essentials
-      1.0.0
+      1.0.1
   </span>
   
 </footer>

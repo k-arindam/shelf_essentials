@@ -67,7 +67,15 @@
     </section>
     
 <section class="desc markdown">
-  <p>The <a href="../../shelf_essentials/HttpMethod.html">HttpMethod</a> associated with the request.</p>
+  <p>Returns the HTTP method of the request as a type-safe <a href="../../shelf_essentials/HttpMethod.html">HttpMethod</a> enum.</p>
+<p>Throws <code>UnsupportedHttpMethodException</code> if the HTTP method is not one of
+the supported methods: GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD.</p>
+<p>Returns: The <a href="../../shelf_essentials/HttpMethod.html">HttpMethod</a> enum value corresponding to the request method</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">if (request.httpMethod == HttpMethod.post) {
+  // Handle POST
+}
+</code></pre>
 </section>
 
     
@@ -108,7 +116,7 @@
 <footer>
   <span class="no-break">
     shelf_essentials
-      1.0.0
+      1.0.1
   </span>
   
 </footer>
