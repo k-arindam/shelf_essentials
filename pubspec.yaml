@@ -1,5 +1,5 @@
 name: shelf_essentials
-description: "Dart Shelf Essentials"
+description: "Essential utilities and middleware for building web servers with Shelf in Dart and Flutter."
 version: 1.0.1
 repository: https://github.com/k-arindam/shelf_essentials
 documentation: https://karindam.in/shelf_essentials
@@ -16,14 +16,9 @@ topics:
 
 environment:
   sdk: ^3.10.1
-  flutter: ">=1.17.0"
 
 dependencies:
-  flutter:
-    sdk: flutter
-
   shelf: ^1.4.2
-  shelf_router: ^1.1.4
   http_parser: ^4.1.2
   mime: ^2.0.0
 
