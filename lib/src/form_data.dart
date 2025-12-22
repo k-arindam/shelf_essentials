@@ -5,15 +5,28 @@ import 'dart:io';
 import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
 
-/// Content-Type: application/x-www-form-urlencoded
+/// Content-Type for URL-encoded form data: `application/x-www-form-urlencoded`
 final formUrlEncodedContentType = ContentType('application', 'x-www-form-urlencoded');
 
-/// Content-Type: multipart/form-data
+/// Content-Type for multipart form data: `multipart/form-data`
 final multipartFormDataContentType = ContentType('multipart', 'form-data');
 
-/// Parses the body as form data and returns a `Future<Map<String, dynamic>>`.
-/// Throws a [StateError] if the MIME type is not "application/x-www-form-urlencoded" or "multipart/form-data".
-/// https://fetch.spec.whatwg.org/#ref-for-dom-body-formdata%E2%91%A0
+/// Parses the request body as form data.
+///
+/// Supports both:
+/// - `application/x-www-form-urlencoded`
+/// - `multipart/form-data`
+///
+/// Parameters:
+/// - [headers]: The request headers (must include content-type)
+/// - [body]: A function that returns the request body as a String
+/// - [bytes]: A function that returns the request body as a byte stream
+///
+/// Returns: A [Future] containing a [FormData] object with parsed fields and files
+///
+/// Throws: [StateError] if the MIME type is not supported
+///
+/// See: https://fetch.spec.whatwg.org/#ref-for-dom-body-formdata%E2%91%A0
 Future<FormData> parseFormData({
   required Map<String, String> headers,
   required Future<String> Function() body,
@@ -138,7 +151,9 @@ class FormData with MapMixin<String, String> {
 }
 
 /// {@template uploaded_file}
-/// The uploaded file of a form data request.
+/// Represents an uploaded file from a form data request.
+///
+/// Provides access to the file name, content type, and file contents via stream or bytes.
 /// {@endtemplate}
 class UploadedFile {
   /// {@macro uploaded_file}
@@ -147,21 +162,25 @@ class UploadedFile {
   /// The name of the uploaded file.
   final String name;
 
-  /// The type of the uploaded file.
+  /// The MIME type of the uploaded file.
   final ContentType contentType;
 
   final Stream<List<int>> _byteStream;
 
   /// Read the content of the file as a list of bytes.
   ///
-  /// Can only be called once.
+  /// Can only be called once. After calling this method, [openRead] cannot be used.
+  ///
+  /// Returns: A [Future] containing the file contents as bytes
   Future<List<int>> readAsBytes() async {
     return (await _byteStream.toList()).fold<List<int>>([], (p, e) => p..addAll(e));
   }
 
   /// Open the content of the file as a stream of bytes.
   ///
-  /// Can only be called once.
+  /// Can only be called once. After calling this method, [readAsBytes] cannot be used.
+  ///
+  /// Returns: A [Stream] of byte lists
   Stream<List<int>> openRead() => _byteStream;
 
   @override
