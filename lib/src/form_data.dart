@@ -6,16 +6,10 @@ import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
 
 /// Content-Type: application/x-www-form-urlencoded
-final formUrlEncodedContentType = ContentType(
-  'application',
-  'x-www-form-urlencoded',
-);
+final formUrlEncodedContentType = ContentType('application', 'x-www-form-urlencoded');
 
 /// Content-Type: multipart/form-data
-final multipartFormDataContentType = ContentType(
-  'multipart',
-  'form-data',
-);
+final multipartFormDataContentType = ContentType('multipart', 'form-data');
 
 /// Parses the body as form data and returns a `Future<Map<String, dynamic>>`.
 /// Throws a [StateError] if the MIME type is not "application/x-www-form-urlencoded" or "multipart/form-data".
@@ -30,13 +24,11 @@ Future<FormData> parseFormData({
   final isMultipartFormData = _isMultipartFormData(contentType);
 
   if (!isFormUrlEncoded && !isMultipartFormData) {
-    throw StateError(
-      '''
+    throw StateError('''
 Body could not be parsed as form data due to an invalid MIME type.
 Expected MIME type: "${formUrlEncodedContentType.mimeType}" OR "${multipartFormDataContentType.mimeType}"
 Actual MIME type: "${contentType?.mimeType ?? ''}"
-''',
-    );
+''');
   }
 
   return isFormUrlEncoded
@@ -83,9 +75,7 @@ Future<FormData> _extractMultipartFormData({
     if (contentDisposition == null) continue;
     if (!contentDisposition.startsWith('form-data;')) continue;
 
-    final values = _keyValueRegexp
-        .allMatches(contentDisposition)
-        .fold(<String, String>{}, (map, match) {
+    final values = _keyValueRegexp.allMatches(contentDisposition).fold(<String, String>{}, (map, match) {
       return map..[match.namedGroup('key')!] = match.namedGroup('value')!;
     });
 
@@ -93,11 +83,7 @@ Future<FormData> _extractMultipartFormData({
     final fileName = values['filename'];
 
     if (fileName != null) {
-      files[name] = UploadedFile(
-        fileName,
-        ContentType.parse(part.headers['content-type'] ?? 'text/plain'),
-        part,
-      );
+      files[name] = UploadedFile(fileName, ContentType.parse(part.headers['content-type'] ?? 'text/plain'), part);
     } else {
       final bytes = (await part.toList()).fold(<int>[], (p, e) => p..addAll(e));
       fields[name] = utf8.decode(bytes);
@@ -112,11 +98,9 @@ Future<FormData> _extractMultipartFormData({
 /// {@endtemplate}
 class FormData with MapMixin<String, String> {
   /// {@macro form_data}
-  const FormData({
-    required Map<String, String> fields,
-    required Map<String, UploadedFile> files,
-  })  : _fields = fields,
-        _files = files;
+  const FormData({required Map<String, String> fields, required Map<String, UploadedFile> files})
+    : _fields = fields,
+      _files = files;
 
   final Map<String, String> _fields;
 
@@ -141,21 +125,15 @@ class FormData with MapMixin<String, String> {
   Iterable<String> get values => _fields.values;
 
   @override
-  @Deprecated(
-    'FormData should be immutable, in the future this will thrown an error',
-  )
+  @Deprecated('FormData should be immutable, in the future this will thrown an error')
   void operator []=(String key, String value) => _fields[key] = value;
 
   @override
-  @Deprecated(
-    'FormData should be immutable, in the future this will thrown an error',
-  )
+  @Deprecated('FormData should be immutable, in the future this will thrown an error')
   void clear() => _fields.clear();
 
   @override
-  @Deprecated(
-    'FormData should be immutable, in the future this will thrown an error',
-  )
+  @Deprecated('FormData should be immutable, in the future this will thrown an error')
   String? remove(Object? key) => _fields.remove(key);
 }
 
@@ -164,11 +142,7 @@ class FormData with MapMixin<String, String> {
 /// {@endtemplate}
 class UploadedFile {
   /// {@macro uploaded_file}
-  const UploadedFile(
-    this.name,
-    this.contentType,
-    this._byteStream,
-  );
+  const UploadedFile(this.name, this.contentType, this._byteStream);
 
   /// The name of the uploaded file.
   final String name;
@@ -182,8 +156,7 @@ class UploadedFile {
   ///
   /// Can only be called once.
   Future<List<int>> readAsBytes() async {
-    return (await _byteStream.toList())
-        .fold<List<int>>([], (p, e) => p..addAll(e));
+    return (await _byteStream.toList()).fold<List<int>>([], (p, e) => p..addAll(e));
   }
 
   /// Open the content of the file as a stream of bytes.
