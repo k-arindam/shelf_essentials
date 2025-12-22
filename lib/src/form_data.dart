@@ -5,21 +5,28 @@ import 'dart:io';
 import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
 
-/// Content-Type: application/x-www-form-urlencoded
-final formUrlEncodedContentType = ContentType(
-  'application',
-  'x-www-form-urlencoded',
-);
+/// Content-Type for URL-encoded form data: `application/x-www-form-urlencoded`
+final formUrlEncodedContentType = ContentType('application', 'x-www-form-urlencoded');
 
-/// Content-Type: multipart/form-data
-final multipartFormDataContentType = ContentType(
-  'multipart',
-  'form-data',
-);
+/// Content-Type for multipart form data: `multipart/form-data`
+final multipartFormDataContentType = ContentType('multipart', 'form-data');
 
-/// Parses the body as form data and returns a `Future<Map<String, dynamic>>`.
-/// Throws a [StateError] if the MIME type is not "application/x-www-form-urlencoded" or "multipart/form-data".
-/// https://fetch.spec.whatwg.org/#ref-for-dom-body-formdata%E2%91%A0
+/// Parses the request body as form data.
+///
+/// Supports both:
+/// - `application/x-www-form-urlencoded`
+/// - `multipart/form-data`
+///
+/// Parameters:
+/// - [headers]: The request headers (must include content-type)
+/// - [body]: A function that returns the request body as a String
+/// - [bytes]: A function that returns the request body as a byte stream
+///
+/// Returns: A [Future] containing a [FormData] object with parsed fields and files
+///
+/// Throws: [StateError] if the MIME type is not supported
+///
+/// See: https://fetch.spec.whatwg.org/#ref-for-dom-body-formdata%E2%91%A0
 Future<FormData> parseFormData({
   required Map<String, String> headers,
   required Future<String> Function() body,
@@ -30,13 +37,11 @@ Future<FormData> parseFormData({
   final isMultipartFormData = _isMultipartFormData(contentType);
 
   if (!isFormUrlEncoded && !isMultipartFormData) {
-    throw StateError(
-      '''
+    throw StateError('''
 Body could not be parsed as form data due to an invalid MIME type.
 Expected MIME type: "${formUrlEncodedContentType.mimeType}" OR "${multipartFormDataContentType.mimeType}"
 Actual MIME type: "${contentType?.mimeType ?? ''}"
-''',
-    );
+''');
   }
 
   return isFormUrlEncoded
@@ -83,9 +88,7 @@ Future<FormData> _extractMultipartFormData({
     if (contentDisposition == null) continue;
     if (!contentDisposition.startsWith('form-data;')) continue;
 
-    final values = _keyValueRegexp
-        .allMatches(contentDisposition)
-        .fold(<String, String>{}, (map, match) {
+    final values = _keyValueRegexp.allMatches(contentDisposition).fold(<String, String>{}, (map, match) {
       return map..[match.namedGroup('key')!] = match.namedGroup('value')!;
     });
 
@@ -93,11 +96,7 @@ Future<FormData> _extractMultipartFormData({
     final fileName = values['filename'];
 
     if (fileName != null) {
-      files[name] = UploadedFile(
-        fileName,
-        ContentType.parse(part.headers['content-type'] ?? 'text/plain'),
-        part,
-      );
+      files[name] = UploadedFile(fileName, ContentType.parse(part.headers['content-type'] ?? 'text/plain'), part);
     } else {
       final bytes = (await part.toList()).fold(<int>[], (p, e) => p..addAll(e));
       fields[name] = utf8.decode(bytes);
@@ -112,11 +111,9 @@ Future<FormData> _extractMultipartFormData({
 /// {@endtemplate}
 class FormData with MapMixin<String, String> {
   /// {@macro form_data}
-  const FormData({
-    required Map<String, String> fields,
-    required Map<String, UploadedFile> files,
-  })  : _fields = fields,
-        _files = files;
+  const FormData({required Map<String, String> fields, required Map<String, UploadedFile> files})
+    : _fields = fields,
+      _files = files;
 
   final Map<String, String> _fields;
 
@@ -141,54 +138,49 @@ class FormData with MapMixin<String, String> {
   Iterable<String> get values => _fields.values;
 
   @override
-  @Deprecated(
-    'FormData should be immutable, in the future this will thrown an error',
-  )
+  @Deprecated('FormData should be immutable, in the future this will thrown an error')
   void operator []=(String key, String value) => _fields[key] = value;
 
   @override
-  @Deprecated(
-    'FormData should be immutable, in the future this will thrown an error',
-  )
+  @Deprecated('FormData should be immutable, in the future this will thrown an error')
   void clear() => _fields.clear();
 
   @override
-  @Deprecated(
-    'FormData should be immutable, in the future this will thrown an error',
-  )
+  @Deprecated('FormData should be immutable, in the future this will thrown an error')
   String? remove(Object? key) => _fields.remove(key);
 }
 
 /// {@template uploaded_file}
-/// The uploaded file of a form data request.
+/// Represents an uploaded file from a form data request.
+///
+/// Provides access to the file name, content type, and file contents via stream or bytes.
 /// {@endtemplate}
 class UploadedFile {
   /// {@macro uploaded_file}
-  const UploadedFile(
-    this.name,
-    this.contentType,
-    this._byteStream,
-  );
+  const UploadedFile(this.name, this.contentType, this._byteStream);
 
   /// The name of the uploaded file.
   final String name;
 
-  /// The type of the uploaded file.
+  /// The MIME type of the uploaded file.
   final ContentType contentType;
 
   final Stream<List<int>> _byteStream;
 
   /// Read the content of the file as a list of bytes.
   ///
-  /// Can only be called once.
+  /// Can only be called once. After calling this method, [openRead] cannot be used.
+  ///
+  /// Returns: A [Future] containing the file contents as bytes
   Future<List<int>> readAsBytes() async {
-    return (await _byteStream.toList())
-        .fold<List<int>>([], (p, e) => p..addAll(e));
+    return (await _byteStream.toList()).fold<List<int>>([], (p, e) => p..addAll(e));
   }
 
   /// Open the content of the file as a stream of bytes.
   ///
-  /// Can only be called once.
+  /// Can only be called once. After calling this method, [readAsBytes] cannot be used.
+  ///
+  /// Returns: A [Stream] of byte lists
   Stream<List<int>> openRead() => _byteStream;
 
   @override

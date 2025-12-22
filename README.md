@@ -121,6 +121,63 @@ if (avatar != null) {
 
 ---
 
+## CORS Headers
+
+### Enable CORS for All Origins
+
+Add CORS headers to all responses with default settings:
+
+```dart
+final handler = Pipeline()
+  .addMiddleware(corsHeaders())
+  .addHandler((request) => Response.ok('Hello'));
+```
+
+---
+
+### Restrict CORS to Specific Origins
+
+Allow CORS only from specific origins:
+
+```dart
+final handler = Pipeline()
+  .addMiddleware(corsHeaders(
+    originChecker: originOneOf(['https://example.com', 'https://app.example.com']),
+  ))
+  .addHandler((request) => Response.ok('Hello'));
+```
+
+---
+
+### Add Custom Headers
+
+Include additional custom headers in CORS responses:
+
+```dart
+final handler = Pipeline()
+  .addMiddleware(corsHeaders(
+    addedHeaders: {
+      'X-Custom-Header': 'custom-value',
+      'Access-Control-Allow-Credentials': 'true',
+    },
+    originChecker: originOneOf(['https://example.com']),
+  ))
+  .addHandler((request) => Response.ok('Hello'));
+```
+
+---
+
+### CORS Defaults
+
+When using `corsHeaders` middleware, the following defaults are applied:
+
+- **Allowed Methods**: DELETE, GET, OPTIONS, PATCH, POST, PUT
+- **Allowed Headers**: accept, accept-encoding, authorization, content-type, dnt, origin, user-agent
+- **Credentials**: true
+- **Max-Age**: 86400 seconds (24 hours)
+
+---
+
 ## UploadedFile
 
 Each uploaded file provides:
@@ -136,44 +193,37 @@ File streams are **single-use**. Call either `readAsBytes()` **or** `openRead()`
 
 ---
 
-## API Overview
+### API Overview
 
-### RequestExtension
-
-| Method | Description |
-|------|------------|
-| `body()` | Reads request body as `String` |
-| `json()` | Parses body as JSON |
-| `formData()` | Parses multipart form data |
-| `httpMethod` | Type-safe HTTP method |
-| `connectionInfo` | Socket connection info |
+| Feature | Description |
+|---------|------------|
+| **Request Extensions** | Methods to read body, parse JSON, handle forms, access HTTP method |
+| **CORS Middleware** | Add CORS headers with origin validation |
+| **Form Data Parsing** | Support for URL-encoded and multipart form data |
+| **Uploaded Files** | Access file name, content-type, and read contents |
+| **HTTP Methods** | Type-safe enum for common HTTP methods |
 
 ---
 
-### HttpMethod
+#### RequestExtension Methods
 
-```dart
-enum HttpMethod {
-  get,
-  post,
-  put,
-  patch,
-  delete,
-  options,
-  head,
-}
-```
+| Method | Returns | Description |
+|--------|---------|------------|
+| `body()` | `Future<String>` | Reads request body as String |
+| `json()` | `Future<dynamic>` | Parses body as JSON (Map, List, String, num, bool) |
+| `formData()` | `Future<FormData>` | Parses multipart or URL-encoded form data |
+| `httpMethod` | `HttpMethod` | Type-safe HTTP method enum |
+| `connectionInfo` | `HttpConnectionInfo?` | Socket connection information |
 
 ---
 
-### FormData
+#### CORS Functions
 
-```dart
-form.fields   // Map<String, String>
-form.files    // Map<String, UploadedFile>
-```
-
-`FormData` is **immutable** by design.
+| Function | Description |
+|----------|------------|
+| `corsHeaders()` | Middleware to add CORS headers to responses |
+| `originAllowAll()` | Origin checker that allows all origins |
+| `originOneOf()` | Origin checker that allows specific origins |
 
 ---
 
