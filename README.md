@@ -291,3 +291,4 @@ Use it freely in open-source and commercial projects.
 
 - Inspired by the simplicity of the [`shelf`](https://pub.dev/packages/shelf) package
 - Special thanks to [`dart-frog`](https://dart-frog.dev)
+- Special thanks to [`shelf-cors-headers`](https://github.com/lenniezelk/shelf-cors-headers)
